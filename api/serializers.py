@@ -4,24 +4,33 @@ This module defines serializers for `Books`, `TaskModel`, `Category`,
 user registration/profile and related payload transformations.
 """
 
-from rest_framework import serializers
 from django.contrib.auth.models import User
-from rest_framework.exceptions import ValidationError
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.utils import timezone
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from rest_framework.validators import UniqueValidator
+
 from .models import Books, TaskModel, UserProfile, Category
+
 
 class BookSerializer(serializers.ModelSerializer):
     """Serialize `Books` instances for API input/output.
 
-    - Provides a read-only `posted_by` username and a shortened
+    - Provides a read-only `owner_username` and a shortened
       description for anonymous requests.
     """
-    posted_by = serializers.ReadOnlyField(source='posted_by.username')
     owner_username = serializers.SerializerMethodField()
 
     class Meta:
         model = Books
-        fields = ['uuid', 'posted_by', 'owner_username', 'downloaded', 'title', 'description', 'author', 'isbn', 'published_date']
+        fields = ['uuid', 'owner_username', 'downloaded',
+                   'title', 'description', 'author', 'isbn', 'published_date', 'download_count',
+                   'source_type', 'source_id', 'created_at', 'updated_at']
+        # NOTE: source_type/source_id are currently writable by any
+        # authenticated user on create. If these should only ever be set
+        # internally (e.g. the search/import flow), add them here:
+        # read_only_fields = ['source_type', 'source_id']
 
     def get_owner_username(self, obj):
         return obj.posted_by.username if obj.posted_by else None
@@ -31,13 +40,20 @@ class BookSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
 
         if request and (not request.user or request.user.is_anonymous):
-            if data.get('description'):
-                data['description'] = data['description'][:40] + "... [Log in to read more]"
+            description = data.get('description')
+            if description and len(description) > 40:
+                data['description'] = description[:40] + "... [Log in to read more]"
         return data
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    """Serializer for `Category` including a `task_count` field."""
+    """Serializer for `Category` including a `task_count` field.
+
+    task_count prefers a DB-side annotation (task_count_annotated) set
+    by CategoryViewSet.get_queryset() to avoid an N+1 .count() query per
+    category in list responses. Falls back to a live query if this
+    serializer is ever used against an unannotated queryset.
+    """
     task_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -46,7 +62,9 @@ class CategorySerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'task_count', 'created_at']
 
     def get_task_count(self, obj):
-        return obj.taskmodel_set.count() 
+        if hasattr(obj, 'task_count_annotated'):
+            return obj.task_count_annotated
+        return obj.taskmodel_set.count()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -59,69 +77,75 @@ class UserSerializer(serializers.ModelSerializer):
 class TaskSerializer(serializers.ModelSerializer):
     """Serialize `TaskModel` with nested user and category data.
 
-    Supports write-side helpers `assigned_to_ids` and `category_id` to
-    simplify client payloads.
+    category_id / assigned_to_ids are PrimaryKeyRelatedFields so invalid
+    IDs are rejected during validation (400) rather than surfacing as a
+    DB IntegrityError (500) on save.
     """
     username = serializers.ReadOnlyField(source='user.username')
-    taskuser = UserSerializer(source='user', read_only=True)  # Added missing source mapping
+    taskuser = UserSerializer(source='user', read_only=True)
     category = CategorySerializer(read_only=True)
-    category_id = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    category_id = serializers.PrimaryKeyRelatedField(
+        source='category', queryset=Category.objects.all(),
+        write_only=True, required=False, allow_null=True
+    )
     assigned_to = UserSerializer(many=True, read_only=True)
-    assigned_to_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
-    is_overdue = serializers.SerializerMethodField()    
+    assigned_to_ids = serializers.PrimaryKeyRelatedField(
+        source='assigned_to', queryset=User.objects.all(),
+        many=True, write_only=True, required=False
+    )
+    is_overdue = serializers.SerializerMethodField()
 
     class Meta:
         model = TaskModel
         fields = [
-            'uuid', 'title', 'username', 'description', 'created_at', 'taskuser', 
-            'updated_at', 'completed', 'category', 'category_id', 'priority', 
+            'uuid', 'title', 'username', 'description', 'created_at', 'taskuser',
+            'updated_at', 'completed', 'category', 'category_id', 'priority',
             'assigned_to', 'assigned_to_ids', 'due_date', 'is_overdue'
         ]
         read_only_fields = ['uuid', 'created_at', 'updated_at']
 
-    # 🚀 FIXED: Variables named correctly and compared to executed datetime object execution
     def get_is_overdue(self, obj):
         if obj.due_date and not obj.completed:
             return obj.due_date < timezone.now()
         return False
 
-    # FIXED: Complete rebuild targeting TaskModel, using proper assignment variables
     def create(self, validated_data):
-        assigned_to_ids = validated_data.pop("assigned_to_ids", None)
-        category_id = validated_data.pop("category_id", None)
-        request = self.context.get("request")
-        
-        if not request or not request.user.is_authenticated:
-            raise ValidationError("Authentication is required to make a task.")
-            
-        # Fixed: Changed from Task to TaskModel
-        task = TaskModel.objects.create(user=request.user, **validated_data)
-        
-        if category_id is not None:
-            task.category_id = category_id  # Assigned correctly via ID relation anchor
-            task.save()
-            
-        if assigned_to_ids:
-            task.assigned_to.set(assigned_to_ids)
-        return task 
+        assigned_to = validated_data.pop("assigned_to", None)
 
-    # FIXED: Re-mapped wrong target strings, fixed condition checks for categories
+        # 'user' is already in validated_data — TaskViewSet.perform_create
+        # calls serializer.save(user=self.request.user), and DRF merges
+        # save() kwargs into validated_data before create() runs. Don't
+        # re-derive it from request.context and pass it again, or you get
+        # "got multiple values for keyword argument 'user'".
+        #
+        # 'category' (from category_id's source=) is already a resolved
+        # Category instance or None, since PrimaryKeyRelatedField resolves
+        # it during validation.
+        task = TaskModel.objects.create(**validated_data)
+
+        if assigned_to is not None:
+            task.assigned_to.set(assigned_to)
+
+        return task
+
     def update(self, instance, validated_data):
-        assigned_to_ids = validated_data.pop("assigned_to_ids", None)
-        category_id = validated_data.pop('category_id', None)
+        assigned_to = validated_data.pop("assigned_to", None)
+        # Only touch category if category_id was actually sent (PATCH is
+        # partial by default) — this correctly leaves the existing
+        # category untouched when omitted, and sets/clears it (including
+        # explicit null) when provided.
+        if 'category' in validated_data:
+            instance.category = validated_data.pop('category')
 
         instance.title = validated_data.get("title", instance.title)
-        instance.description = validated_data.get("description", instance.description) # Mapped from description
+        instance.description = validated_data.get("description", instance.description)
         instance.completed = validated_data.get("completed", instance.completed)
         instance.priority = validated_data.get("priority", instance.priority)
         instance.due_date = validated_data.get("due_date", instance.due_date)
-
-        # Allows updating to a specific ID OR clearing it out entirely if sent as None
-        instance.category_id = category_id if category_id is not None else instance.category_id
         instance.save()
 
-        if assigned_to_ids is not None:
-            instance.assigned_to.set(assigned_to_ids)  # Target proper relationship attribute
+        if assigned_to is not None:
+            instance.assigned_to.set(assigned_to)
 
         return instance
 
@@ -131,8 +155,23 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     Validates `password` and `confirm_pass` match and creates a new
     `User` using `create_user` to ensure proper password hashing.
+
+    `username` is explicitly redeclared (to keep it required/plain
+    CharField styling), which means DRF's automatic UniqueValidator
+    generation for unique model fields does NOT apply here — it only
+    fires for fields DRF generates itself. UniqueValidator is reattached
+    explicitly below so a duplicate username is rejected with a clean
+    400 instead of crashing with an IntegrityError at User.objects.create_user().
     """
-    username = serializers.CharField()
+    username = serializers.CharField(
+        validators=[
+            UnicodeUsernameValidator(),
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message="A user with that username already exists."
+            ),
+        ]
+    )
     password = serializers.CharField(write_only=True)
     confirm_pass = serializers.CharField(write_only=True)
     is_superuser = serializers.BooleanField(read_only=True, default=False)
@@ -145,7 +184,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if attrs['password'] != attrs['confirm_pass']:
             raise ValidationError({"confirm_pass": "passwords aren't the same"})
-        return attrs 
+        return attrs
 
     def create(self, validated_data):
         validated_data.pop('confirm_pass', None)
@@ -153,12 +192,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             username=validated_data['username'],
             password=validated_data['password']
         )
-    
-        
+
+
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source="user.username", read_only=True)
     email = serializers.CharField(source="user.email", read_only=True)
-    
+
     class Meta:
         model = UserProfile
         fields = ['uuid', 'username', 'email', 'bio', 'phone_no', 'avatar', 'website', 'created_at', 'updated_at']

@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +22,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-6dp-$a0%wq)5i=b11xlb*!34%v*=o8h7f&47j9(w)4!hj3!&yz'
+# Pulled from env in real deployments; the hardcoded value here is a
+# dev-only fallback so local setup still works without extra config.
+SECRET_KEY = os.environ.get(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-6dp-$a0%wq)5i=b11xlb*!34%v*=o8h7f&47j9(w)4!hj3!&yz'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+# Django enforces ALLOWED_HOSTS strictly once DEBUG=False — an empty list
+# would reject every request in production, not just be "less secure".
+# Populate via env var (comma-separated) when DEBUG is off.
+ALLOWED_HOSTS = (
+    os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if not DEBUG else []
+)
 
 
 # Application definition
@@ -42,39 +54,67 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     'corsheaders',
     'api.apps.ApiConfig',
-    
 ]
 
-REST_FRAMEWORK ={
+# BrowsableAPIRenderer is handy in dev but exposes a full HTML explorer
+# (including POST/PUT forms) in production — gate it on DEBUG.
+_DEFAULT_RENDERER_CLASSES = ['rest_framework.renderers.JSONRenderer']
+if DEBUG:
+    _DEFAULT_RENDERER_CLASSES.append('rest_framework.renderers.BrowsableAPIRenderer')
+
+REST_FRAMEWORK = {
     "DEFAULT_FILTER_BACKENDS": [
         "django_filters.rest_framework.DjangoFilterBackend",
         "rest_framework.filters.SearchFilter",
-        "rest_framework.filters.OrderingFilter"],
-    "DEFAULT_THROTTLE_CLASSES":[
-        'rest_framework.throttling.AnonRateThrottle',
-        'rest_framework.throttling.UserRateThrottle'
+        "rest_framework.filters.OrderingFilter",
     ],
-"DEFAULT_AUTHENTICATION_CLASSES": [
-'rest_framework_simplejwt.authentication.JWTAuthentication',
-],
-"DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
+    "DEFAULT_THROTTLE_CLASSES": [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    # REQUIRED alongside DEFAULT_THROTTLE_CLASSES above — without rates
+    # for the 'anon'/'user' scopes, SimpleRateThrottle.get_rate() raises
+    # ImproperlyConfigured on every single request, since both throttle
+    # classes are applied globally and instantiated on every call.
+    # Tune these numbers to real expected traffic.
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "100/day",
+        "user": "1000/day",
+    },
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
+    "DEFAULT_RENDERER_CLASSES": _DEFAULT_RENDERER_CLASSES,
+    "DEFAULT_PARSER_CLASSES": [
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser',
+    ],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+}
 
-"DEFAULT_RENDERER_CLASSES": [
-'rest_framework.renderers.JSONRenderer',
-"rest_framework.renderers.BrowsableAPIRenderer"
-],
-"DEFAULT_PARSER_CLASSES": [
-'rest_framework.parsers.JSONParser',
-'rest_framework.parsers.FormParser',
-'rest_framework.parsers.MultiPartParser',
-],
-"DEFAULT_PAGINATION_CLASS":"rest_framework.pagination.PageNumberPagination",
-"PAGE_SIZE": 10}
+# Access/refresh token lifetimes and rotation policy for
+# rest_framework_simplejwt. Defaults (5 min access / 1 day refresh, no
+# rotation) apply silently if this dict is absent — made explicit here,
+# and refresh-token rotation is on so a compromised or post-deletion
+# refresh token can't keep minting new access tokens indefinitely.
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    # BLACKLIST_AFTER_ROTATION requires adding
+    # 'rest_framework_simplejwt.token_blacklist' to INSTALLED_APPS and
+    # running its migrations. Left off here since that app isn't
+    # installed yet — add both together if you want it.
+    "BLACKLIST_AFTER_ROTATION": False,
+}
 
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -85,8 +125,9 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
-'http://localhost:3000',
-'http://localhost:5173']
+    'http://localhost:3000',
+    'http://localhost:5173',
+]
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
@@ -153,3 +194,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Media files (user uploads, e.g. UserProfile.avatar)
+# https://docs.djangoproject.com/en/6.0/topics/files/
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
