@@ -170,15 +170,19 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [booksResponse, tasksResponse, categoriesResponse] =
-          await Promise.all([
-            API.get("/books/"),
-            API.get("/tasks/"),
-            API.get("/categories/"),
-          ]);
+        const [booksResponse, categoriesResponse] = await Promise.all([
+          API.get("/books/"),
+          API.get("/categories/"),
+        ]);
         setBooks(unwrapResults<Book>(booksResponse.data));
-        setTasks(unwrapResults<Task>(tasksResponse.data));
         setCategories(unwrapResults<Category>(categoriesResponse.data));
+
+        if (isLoggedIn) {
+          const tasksResponse = await API.get("/tasks/");
+          setTasks(unwrapResults<Task>(tasksResponse.data));
+        } else {
+          setTasks([]);
+        }
       } catch (error) {
         console.error("Error receiving data from backend:", error);
         setFormError(getErrorMessage(error));
@@ -187,7 +191,7 @@ function App() {
       }
     };
     fetchData();
-  }, []);
+  }, [isLoggedIn]);
 
   const handleCreateTask = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

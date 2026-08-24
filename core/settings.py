@@ -196,7 +196,7 @@ DATABASE_CONFIG = (
     dj_database_url.parse(
         DATABASE_URL,
         conn_max_age=0,
-        ssl_require=True,
+        ssl_require=DATABASE_URL.startswith(('postgres://', 'postgresql://')),
     )
     if DATABASE_URL else {}
 )
