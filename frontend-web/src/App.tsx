@@ -1,5 +1,14 @@
 import { useEffect, useState, type FormEvent } from "react";
 import axios, { type AxiosError, type AxiosInstance } from "axios";
+import {
+  BookOpen,
+  CheckCircle2,
+  KeyRound,
+  LogIn,
+  LogOut,
+  Plus,
+  Search,
+} from "lucide-react";
 
 type Book = {
   uuid: string;
@@ -41,6 +50,7 @@ function unwrapResults<T>(data: T[] | { results: T[] }): T[] {
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000/api";
+const DEFAULT_BOOK_QUERY = "fiction";
 
 const API: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -141,7 +151,7 @@ function App() {
 
   const [taskTitle, setTaskTitle] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(DEFAULT_BOOK_QUERY);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -171,7 +181,7 @@ function App() {
     const fetchData = async () => {
       try {
         const [booksResponse, categoriesResponse] = await Promise.all([
-          API.get("/books/"),
+          API.get("/books/search/", { params: { q: DEFAULT_BOOK_QUERY } }),
           API.get("/categories/"),
         ]);
         setBooks(unwrapResults<Book>(booksResponse.data));
@@ -236,34 +246,51 @@ function App() {
   };
 
   if (loading)
-    return <p style={{ padding: "30px" }}>Loading full-stack system data...</p>;
+    return (
+      <main className="loading-screen">
+        <BookOpen size={24} />
+        <p>Loading your reading desk...</p>
+      </main>
+    );
 
   return (
-    <div
-      style={{
-        padding: "30px",
-        fontFamily: "sans-serif",
-        backgroundColor: "#f9f9f9",
-        minHeight: "100vh",
-      }}
-    >
-      <h1>Django DRF API Dashboard</h1>
+    <main className="app-shell">
+      <header className="topbar">
+        <div className="brand-lockup">
+          <div className="brand-mark">
+            <BookOpen size={20} />
+          </div>
+          <div>
+            <p className="eyebrow">PERSONAL LIBRARY</p>
+            <h1>Reading desk</h1>
+          </div>
+        </div>
+        <span className="topbar-note">A calmer way to keep track</span>
+      </header>
 
-      <section
-        style={{
-          marginBottom: "30px",
-          padding: "15px",
-          border: "1px solid #ddd",
-          backgroundColor: "#fff",
-          borderRadius: "8px",
-        }}
-      >
+      <section className="auth-portal">
+        <div className="auth-copy">
+          <p className="eyebrow">ACCOUNT PORTAL</p>
+          <h3>
+            {isLoggedIn ? "Your desk is unlocked" : "Sign in to your desk"}
+          </h3>
+          <p>
+            {isLoggedIn
+              ? "Your personal tasks are ready."
+              : "Log in to manage tasks and save your reading."}
+          </p>
+        </div>
         {isLoggedIn ? (
-          <button type="button" onClick={handleLogout}>
+          <button
+            className="button button-ghost"
+            type="button"
+            onClick={handleLogout}
+          >
+            <LogOut size={16} />
             Log out
           </button>
         ) : (
-          <form onSubmit={handleLogin} style={{ display: "flex", gap: "10px" }}>
+          <form onSubmit={handleLogin} className="login-form">
             <input
               type="text"
               placeholder="Username"
@@ -278,192 +305,159 @@ function App() {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <button type="submit">Log in</button>
+            <button className="button button-dark" type="submit">
+              <LogIn size={16} /> Log in
+            </button>
           </form>
         )}
       </section>
 
+      <section className="intro-row">
+        <div>
+          <p className="eyebrow">YOUR COLLECTION</p>
+          <h2>Make room for a good story.</h2>
+          <p className="intro-copy">
+            Search the local shelf and Open Library in one place.
+          </p>
+        </div>
+        <div className="stat-chip">
+          <span>{books.length}</span> books found
+        </div>
+      </section>
+
       {formError && (
-        <div
-          style={{
-            marginBottom: "20px",
-            padding: "10px 15px",
-            backgroundColor: "#fdecea",
-            border: "1px solid #f5c2c0",
-            borderRadius: "6px",
-            color: "#611a15",
-          }}
-        >
+        <div className="alert" role="alert">
           {formError}
         </div>
       )}
 
-      <section
-        style={{
-          marginBottom: "30px",
-          padding: "15px",
-          border: "1px solid #ddd",
-          backgroundColor: "#fff",
-          borderRadius: "8px",
-        }}
-      >
-        <h3>Unified Library Search Engine (GET)</h3>
-        <form
-          onSubmit={handleSearchBooks}
-          style={{ display: "flex", gap: "10px" }}
-        >
+      <section className="search-panel">
+        <div className="section-heading">
+          <div className="section-icon">
+            <Search size={18} />
+          </div>
+          <div>
+            <p className="eyebrow">DISCOVER</p>
+            <h3>Find your next read</h3>
+          </div>
+        </div>
+        <form onSubmit={handleSearchBooks} className="search-form">
           <input
             type="text"
-            placeholder="Search local catalog & OpenLibrary simultaneously..."
+            placeholder="Title, author, or keyword"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ flex: 1, padding: "8px" }}
           />
-          <button
-            type="submit"
-            style={{ padding: "8px 15px", cursor: "pointer" }}
-          >
-            Search
+          <button className="button button-teal" type="submit">
+            <Search size={16} /> Search catalog
           </button>
         </form>
       </section>
 
-      <section
-        style={{
-          marginBottom: "30px",
-          padding: "15px",
-          border: "1px solid #ddd",
-          backgroundColor: "#fff",
-          borderRadius: "8px",
-        }}
-      >
-        <h3>Create New Task (POST)</h3>
-        <form
-          onSubmit={handleCreateTask}
-          style={{ display: "flex", gap: "10px" }}
-        >
-          <input
-            type="text"
-            placeholder="Task Title"
-            value={taskTitle}
-            onChange={(e) => setTaskTitle(e.target.value)}
-            required
-            style={{ padding: "8px" }}
-          />
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            style={{ padding: "8px" }}
-          >
-            <option value="">No category</option>
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-          <button
-            type="submit"
-            style={{ padding: "8px 15px", cursor: "pointer" }}
-          >
-            Add Task
-          </button>
-        </form>
-      </section>
-
-      <div
-        style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}
-      >
-        <section
-          style={{
-            padding: "15px",
-            border: "1px solid #ddd",
-            backgroundColor: "#fff",
-            borderRadius: "8px",
-          }}
-        >
-          <h3>Books List Results</h3>
-          <ul style={{ paddingLeft: "20px" }}>
-            {books.map((book, index) => (
-              <li
-                key={book.uuid || book.id || `book-${index}`}
-                style={{
-                  marginBottom: "15px",
-                  paddingBottom: "10px",
-                  borderBottom: "1px dashed #eee",
-                }}
-              >
-                <strong>{book.title}</strong> by {book.author} <br />
-                <small style={{ color: "#666" }}>
-                  Posted by: {book.owner_username || "System Core / Anonymous"}
-                </small>{" "}
-                <br />
-                <p style={{ margin: "5px 0", color: "#444" }}>
-                  {book.description}
-                </p>
-                <span
-                  style={{
-                    fontSize: "11px",
-                    padding: "2px 6px",
-                    borderRadius: "4px",
-                    backgroundColor: book.is_already_cached
-                      ? "#e2f0d9"
-                      : "#fff2cc",
-                  }}
+      <div className="content-grid">
+        <section className="content-panel">
+          <div className="panel-title-row">
+            <div>
+              <p className="eyebrow">CATALOG</p>
+              <h3>Books on the shelf</h3>
+            </div>
+            <BookOpen size={20} />
+          </div>
+          <ul className="book-list">
+            {books.length === 0 ? (
+              <li className="empty-state">
+                <BookOpen size={22} />
+                <strong>No books on the shelf yet</strong>
+                <span>Search above to discover books from Open Library.</span>
+              </li>
+            ) : (
+              books.map((book, index) => (
+                <li
+                  key={book.uuid || book.id || `book-${index}`}
+                  className="book-item"
                 >
-                  {book.is_already_cached
-                    ? "📁 Saved in Library"
-                    : "🌐 Available to Import"}
+                  <div className="book-cover">
+                    <BookOpen size={22} />
+                  </div>
+                  <div className="book-info">
+                    <strong>{book.title}</strong>
+                    <span>by {book.author}</span>
+                    <p>{book.description || "No description available."}</p>
+                    <small>{book.owner_username || "System catalog"}</small>
+                  </div>
+                  <span
+                    className={`status-pill ${book.is_already_cached ? "is-saved" : "is-available"}`}
+                  >
+                    {book.is_already_cached ? "Saved" : "Available"}
+                  </span>
+                </li>
+              ))
+            )}
+          </ul>
+        </section>
+
+        <section className="content-panel">
+          <div className="panel-title-row">
+            <div>
+              <p className="eyebrow">PERSONAL QUEUE</p>
+              <h3>Your tasks</h3>
+            </div>
+            <KeyRound size={20} />
+          </div>
+          <div className="task-create">
+            <div className="section-heading">
+              <div className="section-icon section-icon-coral">
+                <CheckCircle2 size={18} />
+              </div>
+              <div>
+                <p className="eyebrow">TODAY'S LIST</p>
+                <h3>Keep your reading moving</h3>
+              </div>
+            </div>
+            <form onSubmit={handleCreateTask} className="task-form">
+              <input
+                type="text"
+                placeholder="Add a task or reading goal"
+                value={taskTitle}
+                onChange={(e) => setTaskTitle(e.target.value)}
+                required
+              />
+              <select
+                value={categoryId}
+                onChange={(e) => setCategoryId(e.target.value)}
+              >
+                <option value="">No category</option>
+                {categories.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+              <button className="button button-coral" type="submit">
+                <Plus size={17} /> Add task
+              </button>
+            </form>
+          </div>
+          <ul className="task-list">
+            {tasks.map((task) => (
+              <li key={task.uuid} className="task-item">
+                <span
+                  className={`task-dot ${task.completed ? "is-complete" : ""}`}
+                />
+                <div>
+                  <strong>{task.title}</strong>
+                  <small>{task.category?.name || "Uncategorized"}</small>
+                </div>
+                {task.is_overdue && <span className="overdue">Overdue</span>}
+                <span className="task-state">
+                  {task.completed ? "Done" : "Open"}
                 </span>
               </li>
             ))}
           </ul>
         </section>
-
-        <section
-          style={{
-            padding: "15px",
-            border: "1px solid #ddd",
-            backgroundColor: "#fff",
-            borderRadius: "8px",
-          }}
-        >
-          <h3>Tasks List (Scoped User View)</h3>
-          <ul style={{ paddingLeft: "0", listStyle: "none" }}>
-            {tasks.map((task) => (
-              <li
-                key={task.uuid}
-                style={{
-                  marginBottom: "12px",
-                  padding: "10px",
-                  border: "1px solid #eee",
-                  borderRadius: "4px",
-                }}
-              >
-                <strong>{task.title}</strong> -{" "}
-                {task.completed ? "✅ Done" : "⏳ Pending"}
-                {task.is_overdue && (
-                  <span
-                    style={{
-                      color: "red",
-                      fontWeight: "bold",
-                      marginLeft: "10px",
-                    }}
-                  >
-                    (OVERDUE)
-                  </span>
-                )}
-                <div style={{ marginTop: "5px" }}>
-                  <small style={{ color: "#777" }}>
-                    Category: {task.category?.name || "Uncategorized"}
-                  </small>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
       </div>
-    </div>
+    </main>
   );
 }
 
