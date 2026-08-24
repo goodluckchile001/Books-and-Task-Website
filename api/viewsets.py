@@ -12,7 +12,7 @@ import requests
 from .filters import BookFilter, TaskFilter
 from .models import Books, TaskModel, UserProfile, Category
 from .permissions import IsOwnerOrReadOnly
-from .serializers import BookSerializer, TaskSerializer, ProfileSerializer, RegisterSerializer, CategorySerializer
+from .serializers import BookSerializer, TaskSerializer, PublicProfileSerializer,PrivateProfileSerializer, RegisterSerializer, CategorySerializer
 from .throttle import CreateBookThrottle, SearchBooksThrottle
 
 _openlibrary_session = requests.Session()
@@ -181,11 +181,29 @@ class RegisterViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    """Manage user profiles. Write operations require ownership."""
+    """Manage user profiles.
+
+    List/retrieve return PublicProfileSerializer (no PII) for anyone,
+    or PrivateProfileSerializer (includes email/phone_no) when the
+    requester is viewing their own profile. Writes require ownership.
+    """
     queryset = UserProfile.objects.select_related('user').all()
-    serializer_class = ProfileSerializer
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
     lookup_field = 'uuid'
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrieve'):
+            user = self.request.user
+            if self.action == 'retrieve':
+                # Object-level check happens after get_object(), so this
+                # only applies to the single-object case; list always
+                # uses the public serializer per-row (see get_serializer_context
+                # note below if per-row switching is ever needed there).
+                obj = self.get_object()
+                if user.is_authenticated and obj.user_id == user.pk:
+                    return PrivateProfileSerializer
+            return PublicProfileSerializer
+        return PrivateProfileSerializer  # create/update/destroy — always the owner
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

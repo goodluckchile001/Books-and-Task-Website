@@ -193,12 +193,19 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
 
-
-class ProfileSerializer(serializers.ModelSerializer):
+class PublicProfileSerializer(serializers.ModelSerializer):
+    """Safe to show to anyone — no email or phone number."""
     username = serializers.CharField(source="user.username", read_only=True)
-    email = serializers.CharField(source="user.email", read_only=True)
 
     class Meta:
         model = UserProfile
-        fields = ['uuid', 'username', 'email', 'bio', 'phone_no', 'avatar', 'website', 'created_at', 'updated_at']
+        fields = ['uuid', 'username', 'bio', 'avatar', 'website', 'created_at']
         read_only_fields = ['uuid', 'created_at']
+
+
+class PrivateProfileSerializer(PublicProfileSerializer):
+    """Full profile, including PII — only for the profile's own owner."""
+    email = serializers.CharField(source="user.email", read_only=True)
+
+    class Meta(PublicProfileSerializer.Meta):
+        fields = PublicProfileSerializer.Meta.fields + ['email', 'phone_no', 'updated_at']
