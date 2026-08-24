@@ -188,7 +188,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     requester is viewing their own profile. Writes require ownership.
     """
     queryset = UserProfile.objects.select_related('user').all()
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     lookup_field = 'uuid'
 
     def get_serializer_class(self):
