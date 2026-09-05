@@ -3,6 +3,7 @@ import axios from "axios";
 import { ArrowLeft, BookOpen, ExternalLink } from "lucide-react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { API, type Book } from "../api/client";
+import "./BookDetailsPage.css";
 
 export default function BookDetailsPage() {
   const { bookId } = useParams();
@@ -47,38 +48,51 @@ export default function BookDetailsPage() {
     : null;
 
   return (
-    <section className="detail-page">
-      <Link className="back-link" to="/">
+    <section className="pt-12">
+      <Link
+        className="inline-flex items-center gap-1 mb-6 text-teal-700 text-xs font-black no-underline"
+        to="/"
+      >
         <ArrowLeft size={16} /> Back to library
       </Link>
       {loading ? (
-        <div className="empty-state">
+        <div className="grid place-items-center gap-2 py-10 px-3 text-teal-700 text-center">
           <BookOpen size={24} />
-          <span>Loading book details...</span>
+          <span className="text-gray-600 text-xs">Loading book details...</span>
         </div>
       ) : book ? (
-        <article className="book-detail">
-          <div className="detail-cover">
+        <article className="grid grid-cols-2 gap-8 max-w-3xl p-8 border border-gray-300 rounded-xl bg-white shadow-lg">
+          <div
+            className="grid place-items-center aspect-video text-teal-700 rounded-lg"
+            style={{ background: "#dbe8df" }}
+          >
             <BookOpen size={64} />
           </div>
-          <div className="detail-copy">
-            <p className="eyebrow">BOOK DETAILS</p>
-            <h2>{book.title}</h2>
-            <p className="detail-author">by {book.author}</p>
-            <p className="detail-description">
+          <div>
+            <p className="text-xs font-black tracking-wider text-teal-700">
+              BOOK DETAILS
+            </p>
+            <h2 className="mt-2 mb-2 text-3xl">{book.title}</h2>
+            <p className="text-gray-600 text-base">by {book.author}</p>
+            <p className="max-w-md my-7 text-gray-700 leading-relaxed">
               {book.description || "No description available."}
             </p>
-            <div className="detail-meta">
-              <span>
+            <div className="flex flex-wrap gap-2 mb-6 text-gray-600 text-xs">
+              <span className="px-2 py-1.5 rounded bg-gray-100">
                 {book.is_already_cached
                   ? "Saved in your library"
                   : "Open Library result"}
               </span>
-              {book.source_id && <span>Source: {book.source_id}</span>}
+              {book.source_id && (
+                <span className="px-2 py-1.5 rounded bg-gray-100">
+                  Source: {book.source_id}
+                </span>
+              )}
             </div>
             {openLibraryUrl && (
               <a
-                className="button button-teal"
+                className="inline-flex items-center justify-center gap-1 h-10 px-3 rounded text-xs font-bold text-white"
+                style={{ background: "var(--teal)" }}
                 href={openLibraryUrl}
                 target="_blank"
                 rel="noreferrer"
@@ -89,13 +103,19 @@ export default function BookDetailsPage() {
           </div>
         </article>
       ) : (
-        <div className="empty-state">
+        <div className="grid place-items-center gap-2 py-10 px-3 text-teal-700 text-center">
           <BookOpen size={24} />
-          <strong>Book details unavailable</strong>
-          <span>Return to the library and choose a book again.</span>
+          <strong className="text-gray-900 text-sm">
+            Book details unavailable
+          </strong>
+          <span className="text-gray-600 text-xs">
+            Return to the library and choose a book again.
+          </span>
         </div>
       )}
-      <span className="detail-id">Reference: {bookId}</span>
+      <span className="block mt-3 text-gray-400 text-xs">
+        Reference: {bookId}
+      </span>
     </section>
   );
 }

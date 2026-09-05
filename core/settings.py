@@ -191,6 +191,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/6.0/topics/files/
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Read the database connection string from the environment. Do not replace it
+# with a hard-coded Neon URL here; that overrides the current .env values.
 DATABASE_URL = env_config('DATABASE_URL', default='')
 DATABASE_CONFIG = (
     dj_database_url.parse(
@@ -201,9 +204,8 @@ DATABASE_CONFIG = (
     if DATABASE_URL else {}
 )
 
-# Use the hosted database when DATABASE_URL is exported; otherwise keep local
-# Django commands usable with the repository's SQLite database.
 if DATABASE_CONFIG:
+    DATABASE_CONFIG['CONN_HEALTH_CHECKS'] = True
     DATABASES = {'default': DATABASE_CONFIG}
 else:
     DATABASES = {
