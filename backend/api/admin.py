@@ -7,7 +7,6 @@ custom admin displays and search fields to improve admin usability.
 from django.contrib import admin
 from .models import Books, Category, TaskModel, UserProfile  
 
-
 @admin.register(Books)
 class BooksAdmin(admin.ModelAdmin):
     list_display = ['title', 'author', 'isbn', 'published_date', 'uuid', 'created_at']  

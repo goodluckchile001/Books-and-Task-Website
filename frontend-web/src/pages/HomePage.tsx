@@ -2,7 +2,6 @@ import { useEffect, useState, type FormEvent } from "react";
 import { BookOpen, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { API, type Book, unwrapResults, getErrorMessage } from "../api/client";
-import "./HomePage.css";
 
 const DEFAULT_BOOK_QUERY = "fiction";
 

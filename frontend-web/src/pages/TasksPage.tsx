@@ -7,7 +7,6 @@ import {
   unwrapResults,
   getErrorMessage,
 } from "../api/client";
-import "./TasksPage.css";
 
 export default function TasksPage() {
   const [tasks, setTasks] = useState<Task[]>([]);

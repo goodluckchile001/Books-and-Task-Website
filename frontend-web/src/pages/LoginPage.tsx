@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { LogIn } from "lucide-react";
 import { useAuth } from "../context/useAuth";
 import { getErrorMessage } from "../api/client";
-import "./LoginPage.css";
 
 export default function LoginPage() {
   const { login, isLoggedIn } = useAuth();

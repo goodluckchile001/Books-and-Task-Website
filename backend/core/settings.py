@@ -32,7 +32,7 @@ SECRET_KEY = env_config(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env_config('DJANGO_DEBUG', default=True, cast=bool)
+DEBUG = env_config('DJANGO_DEBUG', default=False, cast=bool)
 
 # Django enforces ALLOWED_HOSTS strictly once DEBUG=False — an empty list
 # would reject every request in production, not just be "less secure".
@@ -185,12 +185,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-
+STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 # Media files (user uploads, e.g. UserProfile.avatar)
 # https://docs.djangoproject.com/en/6.0/topics/files/
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 # Read the database connection string from the environment. Do not replace it
 # with a hard-coded Neon URL here; that overrides the current .env values.

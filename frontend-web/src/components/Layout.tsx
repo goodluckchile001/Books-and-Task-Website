@@ -1,7 +1,6 @@
 import { BookOpen, ListChecks, LogIn, LogOut } from "lucide-react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
-import "./Layout.css";
 
 export default function Layout() {
   const { isLoggedIn, logout } = useAuth();

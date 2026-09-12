@@ -3,7 +3,6 @@ import axios from "axios";
 import { ArrowLeft, BookOpen, ExternalLink } from "lucide-react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { API, type Book } from "../api/client";
-import "./BookDetailsPage.css";
 
 export default function BookDetailsPage() {
   const { bookId } = useParams();
