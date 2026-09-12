@@ -45,7 +45,7 @@ numpy==2.4.6
 packaging==26.2
 pandas==3.0.3
 pathspec==1.1.1
-pillow==12.2.0
+pillow==12.3.0
 psycopg==3.3.4
 psycopg-binary==3.3.4
 psycopg-pool==3.3.1
