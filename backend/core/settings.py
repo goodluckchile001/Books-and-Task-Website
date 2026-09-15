@@ -38,6 +38,9 @@ DEBUG = env_config('DJANGO_DEBUG', default=False, cast=bool)
 # Django enforces ALLOWED_HOSTS strictly once DEBUG=False — an empty list
 # would reject every request in production, not just be "less secure".
 # Populate via env var (comma-separated) when DEBUG is off.
+CSRF_TRUSTED_ORIGINS = [
+    "https://books-and-task-website.vercel.app",
+]
 ALLOWED_HOSTS = (
     [host.strip() for host in env_config('DJANGO_ALLOWED_HOSTS', default='').split(',') if host.strip()]
     if not DEBUG else []
