@@ -132,7 +132,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:5173',
-    'https://books-and-task-website.vercel.app/',
+    'https://books-and-task-website.vercel.app',
 ]
 ROOT_URLCONF = 'core.urls'
 
