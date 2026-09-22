@@ -6,9 +6,9 @@ export default function Layout() {
   const { isLoggedIn, logout } = useAuth();
 
   return (
-    <main className="mx-auto w-[calc(100%-2rem)] max-w-[1180px] py-10 md:py-16">
+    <main className="mx-auto w-[calc(100%-2rem)] max-w-295 py-4 md:py-6">
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap');`}</style>
-      <header className="flex flex-wrap items-center justify-between gap-5 border-b border-[#173b35]/15 pb-6">
+      <header className="sticky top-4 z-30 flex flex-wrap items-center justify-between gap-5 border border-[#cfddd7] bg-white/95 px-5 py-4 shadow-[0_12px_28px_rgba(23,59,53,0.08)] backdrop-blur md:top-6">
         <Link className="flex items-center gap-3 no-underline" to="/">
           <span className="grid h-10 w-10 place-items-center rounded-tr-2xl rounded-bl-sm bg-[#176b57] text-white">
             <BookOpen size={20} />
@@ -30,7 +30,7 @@ export default function Layout() {
               `inline-flex items-center gap-1 px-2.5 py-2 font-['Spectral',Georgia,serif] text-xs font-semibold no-underline transition-colors ${isActive ? "text-[#176b57] border-b-2 border-[#176b57]" : "text-[#173b35]/55 hover:text-[#176b57]"}`
             }
           >
-            Library
+            My Shelf
           </NavLink>
           {isLoggedIn && (
             <NavLink
