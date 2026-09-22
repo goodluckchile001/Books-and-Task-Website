@@ -26,6 +26,9 @@ export default function BookDetailsPage() {
               typeof response.data.description === "string"
                 ? response.data.description
                 : "Available from Open Library.",
+            cover_url: response.data.covers?.[0]
+              ? `https://covers.openlibrary.org/b/id/${response.data.covers[0]}-L.jpg`
+              : null,
             is_already_cached: false,
             source_id: id,
             source_type: "openlibrary",
@@ -61,11 +64,16 @@ export default function BookDetailsPage() {
         </div>
       ) : book ? (
         <article className="grid grid-cols-2 gap-8 max-w-3xl p-8 border border-gray-300 rounded-xl bg-white shadow-lg">
-          <div
-            className="grid place-items-center aspect-video text-teal-700 rounded-lg"
-            style={{ background: "#dbe8df" }}
-          >
-            <BookOpen size={64} />
+          <div className="grid place-items-center aspect-video overflow-hidden text-teal-700 bg-emerald-100 rounded-lg">
+            {book.cover_url ? (
+              <img
+                className="w-full h-full object-contain"
+                src={book.cover_url}
+                alt={`Cover of ${book.title}`}
+              />
+            ) : (
+              <BookOpen size={64} />
+            )}
           </div>
           <div>
             <p className="text-xs font-black tracking-wider text-teal-700">

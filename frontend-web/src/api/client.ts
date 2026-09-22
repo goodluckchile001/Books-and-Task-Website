@@ -7,6 +7,7 @@ export type Book = {
   author: string;
   owner_username?: string | null;
   description?: string;
+  cover_url?: string | null;
   is_already_cached: boolean;
   source_id?: string | null;
   source_type?: string;

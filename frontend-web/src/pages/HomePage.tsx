@@ -146,8 +146,16 @@ export default function HomePage() {
                   to={`/books/${encodeURIComponent(book.id || book.source_id || book.uuid)}`}
                   state={{ book }}
                 >
-                  <div className="grid place-items-center flex-shrink-0 w-10 h-14 text-teal-700 bg-emerald-100 rounded-bl-lg rounded-tr-lg">
-                    <BookOpen size={22} />
+                  <div className="grid place-items-center shrink-0 w-10 h-14 overflow-hidden text-teal-700 bg-emerald-100 rounded-bl-lg rounded-tr-lg">
+                    {book.cover_url ? (
+                      <img
+                        className="w-full h-full object-cover"
+                        src={book.cover_url}
+                        alt={`Cover of ${book.title}`}
+                      />
+                    ) : (
+                      <BookOpen size={22} />
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <strong className="block overflow-hidden text-gray-900 text-ellipsis whitespace-nowrap text-sm">
@@ -165,7 +173,7 @@ export default function HomePage() {
                   </div>
                 </Link>
                 <span
-                  className={`flex-shrink-0 px-2 py-1 rounded-full text-xs font-black ${
+                  className={`shrink-0 px-2 py-1 rounded-full text-xs font-black ${
                     book.is_already_cached
                       ? "text-green-800 bg-green-100"
                       : "text-yellow-900 bg-yellow-100"

@@ -21,10 +21,11 @@ class BookSerializer(serializers.ModelSerializer):
       description for anonymous requests.
     """
     owner_username = serializers.SerializerMethodField()
+    cover_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Books
-        fields = ['uuid', 'owner_username', 'downloaded',
+        fields = ['uuid', 'owner_username', 'cover_url', 'downloaded',
                    'title', 'description', 'author', 'isbn', 'published_date', 'download_count',
                    'source_type', 'source_id', 'created_at', 'updated_at']
         # NOTE: source_type/source_id are currently writable by any
@@ -34,6 +35,11 @@ class BookSerializer(serializers.ModelSerializer):
 
     def get_owner_username(self, obj):
         return obj.posted_by.username if obj.posted_by else None
+
+    def get_cover_url(self, obj):
+        if obj.isbn:
+            return f"https://covers.openlibrary.org/b/isbn/{obj.isbn}-M.jpg"
+        return None
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
