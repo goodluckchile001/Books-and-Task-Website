@@ -37,15 +37,15 @@ export default function LoginPage() {
   };
 
   return (
-    <section className="mx-auto mt-12 grid max-w-3xl gap-8 border border-[#172033]/15 border-l-4 border-l-[#1d4ed8] bg-white p-6 shadow-[0_16px_36px_rgba(23,32,51,0.08)] md:grid-cols-[0.8fr_1.2fr] md:p-10">
+    <section className="mx-auto mt-12 grid max-w-3xl gap-8 border border-[#173b35]/15 border-l-4 border-l-[#176b57] bg-white p-6 shadow-[0_16px_36px_rgba(23,59,53,0.08)] md:grid-cols-[0.8fr_1.2fr] md:p-10">
       <div>
-        <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#e76f51]">
+        <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#2d8068]">
           Account portal
         </p>
-        <h2 className="mt-2 font-['Spectral',Georgia,serif] text-3xl font-medium text-[#172033]">
+        <h2 className="mt-2 font-['Spectral',Georgia,serif] text-3xl font-medium text-[#173b35]">
           {isRegistering ? "Create your reading desk" : "Sign in to your desk"}
         </h2>
-        <p className="text-sm text-[#172033]/65">
+        <p className="text-sm text-[#173b35]/65">
           {isRegistering
             ? "Create an account to save books and manage tasks."
             : "Log in to manage tasks and save your reading."}
@@ -54,7 +54,7 @@ export default function LoginPage() {
 
       {error && (
         <div
-          className="col-span-full border border-[#e76f51] bg-[#fff0ee] p-3 text-xs text-[#b93832]"
+          className="col-span-full border border-[#c85a50] bg-[#fff0ee] p-3 text-xs text-[#a13e38]"
           role="alert"
         >
           {error}
@@ -67,7 +67,7 @@ export default function LoginPage() {
           placeholder="Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          className="h-11 border-0 border-b border-[#172033]/25 bg-transparent px-1 text-sm text-[#172033] focus:border-[#1d4ed8] focus:outline-none"
+          className="h-11 border-0 border-b border-[#173b35]/25 bg-transparent px-1 text-sm text-[#173b35] focus:border-[#176b57] focus:outline-none"
           required
         />
         <input
@@ -75,7 +75,7 @@ export default function LoginPage() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="h-11 border-0 border-b border-[#1c1b17]/25 bg-transparent px-1 text-sm text-[#1c1b17] focus:border-[#0f3d2e] focus:outline-none"
+          className="h-11 border-0 border-b border-[#173b35]/25 bg-transparent px-1 text-sm text-[#173b35] focus:border-[#176b57] focus:outline-none"
           required
         />
         {isRegistering && (
@@ -84,12 +84,12 @@ export default function LoginPage() {
             placeholder="Confirm password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="h-11 border-0 border-b border-[#1c1b17]/25 bg-transparent px-1 text-sm text-[#1c1b17] focus:border-[#0f3d2e] focus:outline-none"
+            className="h-11 border-0 border-b border-[#173b35]/25 bg-transparent px-1 text-sm text-[#173b35] focus:border-[#176b57] focus:outline-none"
             required
           />
         )}
         <button
-          className="inline-flex h-11 items-center justify-center gap-1 bg-[#1d4ed8] px-4 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#1e40af]"
+          className="inline-flex h-11 items-center justify-center gap-1 bg-[#176b57] px-4 text-xs font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#125342]"
           type="submit"
         >
           {isRegistering ? <UserPlus size={16} /> : <LogIn size={16} />}
