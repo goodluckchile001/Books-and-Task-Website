@@ -73,7 +73,7 @@ export default function HomePage() {
             Search your shelf and Open Library in one place.
           </p>
         </div>
-        <div className="flex flex-col items-center gap-0.5 min-w-27 -rotate-1 border border-[#76ad94] bg-[#e7f3ed] px-4.5 py-3 shadow-[4px_4px_0_#76ad94]">
+        <div className="flex flex-col items-center gap-0.5 min-w-27 -rotate-1 border border-[#76ad94] bg-white px-4.5 py-3 shadow-[4px_4px_0_#76ad94]">
           <span className="font-['Spectral',Georgia,serif] text-2xl text-[#173b35]">
             {books.length}
           </span>
@@ -92,7 +92,7 @@ export default function HomePage() {
         </div>
       )}
 
-      <section className="mt-6 flex flex-wrap items-center justify-between gap-6 border border-[#173b35]/20 border-l-4 border-l-[#176b57] bg-[#e7f3ed] px-6 py-5 shadow-[5px_5px_0_#b8d8c9]">
+      <section className="mt-6 flex flex-wrap items-center justify-between gap-6 border border-[#173b35]/20 border-l-4 border-l-[#176b57] bg-white px-6 py-5 shadow-[5px_5px_0_#b8d8c9]">
         <div>
           <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#2d8068] mb-1">
             Discover
@@ -149,19 +149,22 @@ export default function HomePage() {
             books.map((book, index) => (
               <li
                 key={book.uuid || book.id || `book-${index}`}
-                className="relative flex items-start gap-4 border-b border-[#1c1b17]/15 py-4.5 last:border-b-0"
+                className="relative flex items-start gap-4 border-b border-[#173b35]/15 py-4.5 transition-colors hover:bg-white last:border-b-0"
               >
                 <Link
                   className="flex min-w-0 flex-1 items-start gap-4 text-inherit no-underline"
                   to={`/books/${encodeURIComponent(book.id || book.source_id || book.uuid)}`}
                   state={{ book }}
                 >
-                  <div className="grid h-15 w-11 shrink-0 place-items-center overflow-hidden rounded-tr-lg rounded-bl-lg border border-[#1c1b17]/15 bg-[#f3ecd9] text-[#0f3d2e]">
+                  <div className="grid h-15 w-11 shrink-0 place-items-center overflow-hidden rounded-tr-lg rounded-bl-lg border border-[#cfddd7] bg-white text-[#176b57]">
                     {book.cover_url ? (
                       <img
                         className="w-full h-full object-cover"
                         src={book.cover_url}
                         alt={`Cover of ${book.title}`}
+                        onError={(event) => {
+                          event.currentTarget.style.display = "none";
+                        }}
                       />
                     ) : (
                       <BookOpen size={22} />

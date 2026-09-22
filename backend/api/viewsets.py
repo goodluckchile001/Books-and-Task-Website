@@ -95,6 +95,7 @@ class BookViewSet(viewsets.ModelViewSet):
                 'author': book.author,
                 'description': book.description,
                 'isbn': book.isbn,
+                'cover_url': f"https://covers.openlibrary.org/b/isbn/{book.isbn}-M.jpg" if book.isbn else None,
                 'source_type': book.source_type,
                 'source_id': book.source_id,
                 'is_already_cached': True
@@ -136,6 +137,7 @@ class BookViewSet(viewsets.ModelViewSet):
                 'author': ", ".join(author_list),
                 'description': "Available to import from global network",
                 'isbn': primary_isbn,
+                'cover_url': f"https://covers.openlibrary.org/b/id/{doc['cover_i']}-M.jpg" if doc.get('cover_i') else None,
                 'source_type': "openlibrary",
                 'source_id': src_id,
                 "is_already_cached": False

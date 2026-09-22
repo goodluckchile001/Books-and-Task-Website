@@ -93,6 +93,9 @@ export default function BookDetailsPage() {
                 className="w-full h-full object-contain"
                 src={book.cover_url}
                 alt={`Cover of ${book.title}`}
+                onError={(event) => {
+                  event.currentTarget.style.display = "none";
+                }}
               />
             ) : (
               <BookOpen size={64} />
