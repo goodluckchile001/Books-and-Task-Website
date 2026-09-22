@@ -72,22 +72,22 @@ export default function BookDetailsPage() {
   return (
     <section className="pt-12">
       <Link
-        className="mb-6 inline-flex items-center gap-1 font-['Spectral',Georgia,serif] text-xs font-semibold text-[#0f3d2e] no-underline"
+        className="mb-6 inline-flex items-center gap-1 font-['Spectral',Georgia,serif] text-xs font-semibold text-[#1d4ed8] no-underline"
         to="/"
       >
         <ArrowLeft size={16} /> Back to library
       </Link>
 
       {loading ? (
-        <div className="grid place-items-center gap-2 px-3 py-10 text-center text-[#0f3d2e]">
+        <div className="grid place-items-center gap-2 px-3 py-10 text-center text-[#1d4ed8]">
           <BookOpen size={24} />
           <span className="text-xs text-[#1c1b17]/60">
             Loading book details…
           </span>
         </div>
       ) : book ? (
-        <article className="grid max-w-4xl gap-8 border border-[#1c1b17]/15 bg-[#f3ecd9] p-6 md:grid-cols-[0.8fr_1.2fr] md:p-10">
-          <div className="grid aspect-3/4 place-items-center overflow-hidden border border-[#1c1b17]/15 bg-[#e5dcc4] text-[#0f3d2e]">
+        <article className="grid max-w-4xl gap-8 border border-[#172033]/15 bg-white p-6 shadow-[0_16px_36px_rgba(23,32,51,0.08)] md:grid-cols-[0.8fr_1.2fr] md:p-10">
+          <div className="grid aspect-3/4 place-items-center overflow-hidden border border-[#172033]/15 bg-[#dbeafe] text-[#1d4ed8]">
             {book.cover_url ? (
               <img
                 className="w-full h-full object-contain"
@@ -99,10 +99,10 @@ export default function BookDetailsPage() {
             )}
           </div>
           <div>
-            <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#7b2d26]">
+            <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#e76f51]">
               Book details
             </p>
-            <h2 className="mt-2 mb-2 font-['Spectral',Georgia,serif] text-4xl font-medium leading-tight text-[#1c1b17]">
+            <h2 className="mt-2 mb-2 font-['Spectral',Georgia,serif] text-4xl font-medium leading-tight text-[#172033]">
               {book.title}
             </h2>
             <p className="text-base italic text-[#1c1b17]/60">
@@ -140,7 +140,7 @@ export default function BookDetailsPage() {
               </span>
             ) : isLoggedIn ? (
               <button
-                className="inline-flex h-11 items-center justify-center gap-1 bg-[#0f3d2e] px-4 text-xs font-semibold text-[#faf6ec] transition-colors hover:bg-[#18533f] disabled:opacity-60"
+                className="inline-flex h-11 items-center justify-center gap-1 bg-[#1d4ed8] px-4 text-xs font-semibold text-white transition-colors hover:bg-[#1e40af] disabled:opacity-60"
                 onClick={handleImport}
                 disabled={importing}
                 type="button"

@@ -44,30 +44,30 @@ export default function TasksPage() {
   return (
     <section className="pt-12">
       <div className="mb-8">
-        <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#7b2d26]">
+        <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#e76f51]">
           Personal queue
         </p>
-        <h2 className="font-['Spectral',Georgia,serif] text-4xl font-medium text-[#1c1b17]">
+        <h2 className="font-['Spectral',Georgia,serif] text-4xl font-medium text-[#172033]">
           Keep your reading moving.
         </h2>
-        <p className="m-0 text-sm text-[#1c1b17]/60">
+        <p className="m-0 text-sm text-[#172033]/60">
           Turn good intentions into the next small step.
         </p>
       </div>
       {error && (
         <div
-          className="mb-5 border border-[#7b2d26] bg-[#f8ece9] p-3 text-xs text-[#7b2d26]"
+          className="mb-5 border border-[#e76f51] bg-[#fff0ee] p-3 text-xs text-[#b93832]"
           role="alert"
         >
           {error}
         </div>
       )}
       <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-        <section className="self-start border border-[#1c1b17]/15 border-l-4 border-l-[#a9824f] bg-[#f3ecd9] p-6">
+        <section className="self-start border border-[#172033]/15 border-l-4 border-l-[#f2b84b] bg-white p-6 shadow-[0_12px_28px_rgba(23,32,51,0.06)]">
           <div className="flex items-center gap-2.5">
-            <CheckCircle2 size={20} className="text-[#7b2d26]" />
+            <CheckCircle2 size={20} className="text-[#e76f51]" />
             <div>
-              <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#a9824f]">
+              <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#b7791f]">
                 New task
               </p>
               <h3 className="font-['Spectral',Georgia,serif] text-lg font-semibold text-[#1c1b17]">
@@ -96,7 +96,7 @@ export default function TasksPage() {
               ))}
             </select>
             <button
-              className="inline-flex h-11 w-full items-center justify-center gap-1 bg-[#0f3d2e] px-3 text-xs font-semibold text-[#faf6ec] transition-colors hover:bg-[#18533f]"
+              className="inline-flex h-11 w-full items-center justify-center gap-1 bg-[#1d4ed8] px-3 text-xs font-semibold text-white transition-colors hover:bg-[#1e40af]"
               type="submit"
             >
               <Plus size={17} /> Add task
@@ -113,7 +113,7 @@ export default function TasksPage() {
                 {tasks.length} open items
               </h3>
             </div>
-            <CheckCircle2 size={20} className="text-[#0f3d2e]" />
+            <CheckCircle2 size={20} className="text-[#1d4ed8]" />
           </div>
           <ul className="list-none p-0 m-0">
             {tasks.length === 0 ? (
@@ -133,20 +133,20 @@ export default function TasksPage() {
                   <span
                     className={`h-3 w-3 shrink-0 rounded-full border-2 ${
                       task.completed
-                        ? "border-[#0f3d2e] bg-[#0f3d2e]"
-                        : "border-[#7b2d26]"
+                        ? "border-[#1d4ed8] bg-[#1d4ed8]"
+                        : "border-[#e76f51]"
                     }`}
                   />
                   <div className="min-w-0 flex-1">
                     <strong className="block font-['Spectral',Georgia,serif] text-sm font-semibold text-[#1c1b17]">
                       {task.title}
                     </strong>
-                    <small className="mt-1 block text-xs text-[#a9824f]">
+                    <small className="mt-1 block text-xs text-[#b7791f]">
                       {task.category?.name || "Uncategorized"}
                     </small>
                   </div>
                   {task.is_overdue && (
-                    <span className="shrink-0 border border-[#7b2d26] px-2 py-1 text-xs font-semibold text-[#7b2d26]">
+                    <span className="shrink-0 border border-[#e76f51] px-2 py-1 text-xs font-semibold text-[#b93832]">
                       Overdue
                     </span>
                   )}

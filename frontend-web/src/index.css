@@ -2,16 +2,16 @@
 
 :root {
   font-family: "DM Sans", "Segoe UI", sans-serif;
-  color: #20352f;
-  background: #e5eee5;
-  --ink: #20352f;
-  --muted: #62756d;
-  --paper: #fffaf0;
-  --line: #cbd9ce;
-  --teal: #07533f;
-  --coral: #c95543;
-  --yellow: #d39a3c;
-  --shadow: 0 18px 48px rgba(37, 55, 54, 0.09);
+  color: #172033;
+  background: #eef3f8;
+  --ink: #172033;
+  --muted: #667085;
+  --paper: #ffffff;
+  --line: #d7e0ec;
+  --teal: #1d4ed8;
+  --coral: #e76f51;
+  --yellow: #f2b84b;
+  --shadow: 0 18px 48px rgba(23, 32, 51, 0.1);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -26,8 +26,8 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 8% 0%, #fff2cf 0, transparent 30%),
-    radial-gradient(circle at 100% 20%, #d8eee4 0, transparent 34%), #e5eee5;
+    radial-gradient(circle at 8% 0%, #fff1d6 0, transparent 30%),
+    radial-gradient(circle at 100% 20%, #dbeafe 0, transparent 34%), #eef3f8;
 }
 
 button,
@@ -41,7 +41,7 @@ button {
 button:focus-visible,
 input:focus-visible,
 select:focus-visible {
-  outline: 3px solid rgba(7, 83, 63, 0.28);
+  outline: 3px solid rgba(29, 78, 216, 0.28);
   outline-offset: 2px;
 }
 
