@@ -61,19 +61,19 @@ export default function HomePage() {
     <>
       <FontImport />
 
-      <section className="flex flex-wrap items-end justify-between gap-6 py-12 border-b border-[#1c1b17]/15">
+      <section className="flex flex-wrap items-end justify-between gap-6 py-12 border-b border-[#20352f]/20">
         <div>
-          <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#7b2d26] mb-1">
+          <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#c95543] mb-1">
             Your collection
           </p>
-          <h2 className="font-['Spectral',Georgia,serif] font-medium text-4xl leading-[1.15] text-[#1c1b17] m-0 mb-2">
+          <h2 className="font-['Spectral',Georgia,serif] font-medium text-4xl leading-[1.15] text-[#20352f] m-0 mb-2">
             Make room for a good story.
           </h2>
           <p className="m-0 text-[#1c1b17]/60 text-sm max-w-[34ch]">
             Search your shelf and Open Library in one place.
           </p>
         </div>
-        <div className="flex flex-col items-center gap-0.5 min-w-27 -rotate-1 border border-[#a9824f] bg-[#f3ecd9] px-4.5 py-3">
+        <div className="flex flex-col items-center gap-0.5 min-w-27 -rotate-1 border border-[#d39a3c] bg-[#fff0c7] px-4.5 py-3 shadow-[4px_4px_0_#d39a3c]">
           <span className="font-['Spectral',Georgia,serif] text-2xl text-[#1c1b17]">
             {books.length}
           </span>
@@ -85,16 +85,16 @@ export default function HomePage() {
 
       {error && (
         <div
-          className="mt-5 px-4 py-3 text-[#7b2d26] bg-[#f8ece9] border border-[#7b2d26] text-xs"
+          className="mt-5 px-4 py-3 text-[#9f392d] bg-[#ffebe5] border border-[#c95543] text-xs"
           role="alert"
         >
           {error}
         </div>
       )}
 
-      <section className="mt-6 flex flex-wrap items-center justify-between gap-6 border border-[#1c1b17]/15 border-l-4 border-l-[#0f3d2e] bg-[#f3ecd9] px-6 py-5">
+      <section className="mt-6 flex flex-wrap items-center justify-between gap-6 border border-[#20352f]/20 border-l-4 border-l-[#07533f] bg-[#fff0c7] px-6 py-5 shadow-[5px_5px_0_#b8d5c2]">
         <div>
-          <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#a9824f] mb-1">
+          <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#b47724] mb-1">
             Discover
           </p>
           <h3 className="font-['Spectral',Georgia,serif] font-semibold text-lg text-[#1c1b17] m-0">
@@ -114,7 +114,7 @@ export default function HomePage() {
             className="min-w-0 flex-1 border-0 border-b border-[#1c1b17]/25 bg-transparent px-0.5 py-2 text-sm text-[#1c1b17] placeholder:text-[#1c1b17]/40 focus:border-[#0f3d2e] focus:outline-none"
           />
           <button
-            className="inline-flex items-center gap-1.5 rounded-sm bg-[#0f3d2e] px-4.5 py-2.5 text-sm font-semibold text-[#faf6ec] transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_10px_rgba(15,61,46,0.25)]"
+            className="inline-flex items-center gap-1.5 rounded-sm bg-[#07533f] px-4.5 py-2.5 text-sm font-semibold text-[#fffaf0] transition-all hover:-translate-y-0.5 hover:bg-[#0d7055] hover:shadow-[0_4px_10px_rgba(7,83,63,0.3)]"
             type="submit"
           >
             <Search size={16} /> Search catalog
@@ -123,9 +123,9 @@ export default function HomePage() {
       </section>
 
       <section className="mt-7">
-        <div className="mb-1 flex items-end justify-between border-b border-[#1c1b17]/15 pb-3">
+        <div className="mb-1 flex items-end justify-between border-b border-[#20352f]/20 pb-3">
           <div>
-            <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#a9824f] mb-1">
+            <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#b47724] mb-1">
               Catalog
             </p>
             <h3 className="font-['Spectral',Georgia,serif] font-semibold text-lg text-[#1c1b17] m-0">
