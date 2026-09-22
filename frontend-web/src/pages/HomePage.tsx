@@ -5,6 +5,10 @@ import { API, type Book, unwrapResults, getErrorMessage } from "../api/client";
 
 const DEFAULT_BOOK_QUERY = "fiction";
 
+const FontImport = () => (
+  <style>{`@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap');`}</style>
+);
+
 export default function HomePage() {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,69 +48,73 @@ export default function HomePage() {
 
   if (loading)
     return (
-      <div className="loading-screen">
+      <div className="flex flex-col items-center justify-center gap-3 py-24 text-[#0f3d2e]">
+        <FontImport />
         <BookOpen size={24} />
-        <p>Loading your reading desk...</p>
+        <p className="text-sm text-[#1c1b17]/70">
+          Loading your reading desk...
+        </p>
       </div>
     );
 
   return (
     <>
-      <section className="flex items-end justify-between gap-6 py-14 px-0">
+      <FontImport />
+
+      <section className="flex flex-wrap items-end justify-between gap-6 py-12 border-b border-[#1c1b17]/15">
         <div>
-          <p className="text-xs font-black tracking-wider text-teal-700">
-            YOUR COLLECTION
+          <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#7b2d26] mb-1">
+            Your collection
           </p>
-          <h2>Make room for a good story.</h2>
-          <p className="m-0 text-gray-600 text-base">
-            Search the local shelf and Open Library in one place.
+          <h2 className="font-['Spectral',Georgia,serif] font-medium text-4xl leading-[1.15] text-[#1c1b17] m-0 mb-2">
+            Make room for a good story.
+          </h2>
+          <p className="m-0 text-[#1c1b17]/60 text-sm max-w-[34ch]">
+            Search your shelf and Open Library in one place.
           </p>
         </div>
-        <div className="px-3 py-2.5 text-gray-600 border border-gray-400 rounded-full text-xs whitespace-nowrap">
-          <span className="mr-1 text-red-600 text-lg font-black">
+        <div className="flex flex-col items-center gap-0.5 min-w-27 -rotate-1 border border-[#a9824f] bg-[#f3ecd9] px-4.5 py-3">
+          <span className="font-['Spectral',Georgia,serif] text-2xl text-[#1c1b17]">
             {books.length}
-          </span>{" "}
-          books found
+          </span>
+          <span className="font-['Spectral',Georgia,serif] italic text-[11px] text-[#1c1b17]/60 text-center">
+            titles on the shelf
+          </span>
         </div>
       </section>
 
       {error && (
         <div
-          className="mb-5 p-3 text-red-900 bg-red-100 border border-red-300 rounded text-xs"
+          className="mt-5 px-4 py-3 text-[#7b2d26] bg-[#f8ece9] border border-[#7b2d26] text-xs"
           role="alert"
         >
           {error}
         </div>
       )}
 
-      <section className="border border-gray-300 rounded-xl bg-white shadow-lg p-4.5 flex items-center justify-between gap-5.5">
-        <div className="flex items-center gap-2.5">
-          <div
-            className="grid place-items-center w-9 h-9 text-white rounded-lg"
-            style={{ background: "var(--teal)" }}
-          >
-            <Search size={18} />
-          </div>
-          <div>
-            <p className="text-xs font-black tracking-wider text-teal-700">
-              DISCOVER
-            </p>
-            <h3>Find your next read</h3>
-          </div>
+      <section className="mt-6 flex flex-wrap items-center justify-between gap-6 border border-[#1c1b17]/15 border-l-4 border-l-[#0f3d2e] bg-[#f3ecd9] px-6 py-5">
+        <div>
+          <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#a9824f] mb-1">
+            Discover
+          </p>
+          <h3 className="font-['Spectral',Georgia,serif] font-semibold text-lg text-[#1c1b17] m-0">
+            Find your next read
+          </h3>
         </div>
         <form
           onSubmit={handleSearchBooks}
-          className="flex items-center gap-2 flex-1 max-w-2xl"
+          className="flex flex-1 min-w-65 items-center gap-3"
         >
           <input
             type="text"
             placeholder="Title, author, or keyword"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-10 border border-gray-300 rounded px-3 text-gray-900 bg-white bg-opacity-75 flex-1 min-w-0"
+            aria-label="Search books"
+            className="min-w-0 flex-1 border-0 border-b border-[#1c1b17]/25 bg-transparent px-0.5 py-2 text-sm text-[#1c1b17] placeholder:text-[#1c1b17]/40 focus:border-[#0f3d2e] focus:outline-none"
           />
           <button
-            className="inline-flex items-center justify-center gap-1 h-10 px-3 rounded text-xs font-bold text-white bg-teal-700 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+            className="inline-flex items-center gap-1.5 rounded-sm bg-[#0f3d2e] px-4.5 py-2.5 text-sm font-semibold text-[#faf6ec] transition-all hover:-translate-y-0.5 hover:shadow-[0_4px_10px_rgba(15,61,46,0.25)]"
             type="submit"
           >
             <Search size={16} /> Search catalog
@@ -114,21 +122,23 @@ export default function HomePage() {
         </form>
       </section>
 
-      <section className="border border-gray-300 rounded-xl bg-white shadow-lg p-5 mt-3">
-        <div className="flex items-start justify-between border-b border-gray-300 pb-4 mb-4">
+      <section className="mt-7">
+        <div className="mb-1 flex items-end justify-between border-b border-[#1c1b17]/15 pb-3">
           <div>
-            <p className="text-xs font-black tracking-wider text-teal-700">
-              CATALOG
+            <p className="font-['Spectral',Georgia,serif] italic text-[13px] text-[#a9824f] mb-1">
+              Catalog
             </p>
-            <h3>Books on the shelf</h3>
+            <h3 className="font-['Spectral',Georgia,serif] font-semibold text-lg text-[#1c1b17] m-0">
+              Books on the shelf
+            </h3>
           </div>
-          <BookOpen size={20} className="text-teal-700" />
+          <BookOpen size={20} className="text-[#0f3d2e]" />
         </div>
-        <ul className="list-none p-0 m-0">
+        <ul className="m-0 list-none p-0">
           {books.length === 0 ? (
-            <li className="grid place-items-center gap-2 py-10 px-3 text-teal-700 text-center">
-              <BookOpen size={22} />
-              <strong className="text-gray-900 text-sm">
+            <li className="flex flex-col items-center gap-2 py-12 px-3 text-center text-[#1c1b17]/60">
+              <BookOpen size={24} className="text-[#0f3d2e]" />
+              <strong className="font-['Spectral',Georgia,serif] text-sm text-[#1c1b17]">
                 No books on the shelf yet
               </strong>
               <span className="text-gray-600 text-xs">
@@ -139,14 +149,14 @@ export default function HomePage() {
             books.map((book, index) => (
               <li
                 key={book.uuid || book.id || `book-${index}`}
-                className="relative flex items-start gap-3 py-4 px-0 border-b border-gray-300 last:border-b-0"
+                className="relative flex items-start gap-4 border-b border-[#1c1b17]/15 py-4.5 last:border-b-0"
               >
                 <Link
-                  className="flex items-start flex-1 gap-3 min-w-0 text-inherit no-underline hover:text-inherit"
+                  className="flex min-w-0 flex-1 items-start gap-4 text-inherit no-underline"
                   to={`/books/${encodeURIComponent(book.id || book.source_id || book.uuid)}`}
                   state={{ book }}
                 >
-                  <div className="grid place-items-center shrink-0 w-10 h-14 overflow-hidden text-teal-700 bg-emerald-100 rounded-bl-lg rounded-tr-lg">
+                  <div className="grid h-15 w-11 shrink-0 place-items-center overflow-hidden rounded-tr-lg rounded-bl-lg border border-[#1c1b17]/15 bg-[#f3ecd9] text-[#0f3d2e]">
                     {book.cover_url ? (
                       <img
                         className="w-full h-full object-cover"
@@ -158,25 +168,25 @@ export default function HomePage() {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <strong className="block overflow-hidden text-gray-900 text-ellipsis whitespace-nowrap text-sm">
+                    <strong className="block overflow-hidden text-ellipsis whitespace-nowrap font-['Spectral',Georgia,serif] text-sm font-semibold text-[#1c1b17]">
                       {book.title}
                     </strong>
-                    <span className="block mt-0.5 text-gray-600 text-xs">
+                    <span className="mt-0.5 block text-xs italic text-[#1c1b17]/60">
                       by {book.author}
                     </span>
-                    <p className="block my-2 text-gray-700 text-xs leading-relaxed">
+                    <p className="my-2 line-clamp-2 text-xs leading-relaxed text-[#1c1b17]/75">
                       {book.description || "No description available."}
                     </p>
-                    <small className="block text-gray-500 text-xs">
+                    <small className="block text-[11px] text-[#a9824f]">
                       {book.owner_username || "System catalog"}
                     </small>
                   </div>
                 </Link>
                 <span
-                  className={`shrink-0 px-2 py-1 rounded-full text-xs font-black ${
+                  className={`mt-0.5 shrink-0 -rotate-2 self-start border px-2.5 py-1 font-['Spectral',Georgia,serif] italic text-[11px] ${
                     book.is_already_cached
-                      ? "text-green-800 bg-green-100"
-                      : "text-yellow-900 bg-yellow-100"
+                      ? "border-[#0f3d2e] text-[#0f3d2e]"
+                      : "border-[#7b2d26] text-[#7b2d26]"
                   }`}
                 >
                   {book.is_already_cached ? "Saved" : "Available"}

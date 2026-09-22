@@ -44,36 +44,35 @@ export default function TasksPage() {
   return (
     <section className="pt-12">
       <div className="mb-8">
-        <p className="text-xs font-black tracking-wider text-teal-700">
-          PERSONAL QUEUE
+        <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#7b2d26]">
+          Personal queue
         </p>
-        <h2>Keep your reading moving.</h2>
-        <p className="m-0 text-gray-600 text-base">
+        <h2 className="font-['Spectral',Georgia,serif] text-4xl font-medium text-[#1c1b17]">
+          Keep your reading moving.
+        </h2>
+        <p className="m-0 text-sm text-[#1c1b17]/60">
           Turn good intentions into the next small step.
         </p>
       </div>
       {error && (
         <div
-          className="mb-5 p-3 text-red-900 bg-red-100 border border-red-300 rounded text-xs"
+          className="mb-5 border border-[#7b2d26] bg-[#f8ece9] p-3 text-xs text-[#7b2d26]"
           role="alert"
         >
           {error}
         </div>
       )}
-      <div className="grid grid-cols-2 gap-3.5">
-        <section className="border border-gray-300 rounded-xl bg-white shadow-lg p-5 self-start">
+      <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+        <section className="self-start border border-[#1c1b17]/15 border-l-4 border-l-[#a9824f] bg-[#f3ecd9] p-6">
           <div className="flex items-center gap-2.5">
-            <div
-              className="grid place-items-center w-9 h-9 text-white rounded-lg"
-              style={{ background: "var(--coral)" }}
-            >
-              <CheckCircle2 size={18} />
-            </div>
+            <CheckCircle2 size={20} className="text-[#7b2d26]" />
             <div>
-              <p className="text-xs font-black tracking-wider text-teal-700">
-                NEW TASK
+              <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#a9824f]">
+                New task
               </p>
-              <h3>Add a reading goal</h3>
+              <h3 className="font-['Spectral',Georgia,serif] text-lg font-semibold text-[#1c1b17]">
+                Add a reading goal
+              </h3>
             </div>
           </div>
           <form onSubmit={handleCreateTask} className="grid gap-2.5 mt-5">
@@ -81,13 +80,13 @@ export default function TasksPage() {
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               placeholder="Read chapter five"
-              className="h-10 border border-gray-300 rounded px-3 text-gray-900 bg-white bg-opacity-75"
+              className="h-11 border-0 border-b border-[#1c1b17]/25 bg-transparent px-1 text-sm text-[#1c1b17] focus:border-[#0f3d2e] focus:outline-none"
               required
             />
             <select
               value={categoryId}
               onChange={(event) => setCategoryId(event.target.value)}
-              className="h-10 border border-gray-300 rounded px-3 text-gray-900 bg-white bg-opacity-75 w-full"
+              className="h-11 border-0 border-b border-[#1c1b17]/25 bg-transparent px-1 text-sm text-[#1c1b17] focus:border-[#0f3d2e] focus:outline-none"
             >
               <option value="">No category</option>
               {categories.map((category) => (
@@ -97,27 +96,28 @@ export default function TasksPage() {
               ))}
             </select>
             <button
-              className="inline-flex items-center justify-center gap-1 h-10 px-3 rounded text-xs font-bold text-white w-full"
-              style={{ background: "var(--coral)" }}
+              className="inline-flex h-11 w-full items-center justify-center gap-1 bg-[#0f3d2e] px-3 text-xs font-semibold text-[#faf6ec] transition-colors hover:bg-[#18533f]"
               type="submit"
             >
               <Plus size={17} /> Add task
             </button>
           </form>
         </section>
-        <section className="border border-gray-300 rounded-xl bg-white shadow-lg p-5">
-          <div className="flex items-start justify-between border-b border-gray-300 pb-4 mb-4">
+        <section className="border-t border-[#1c1b17]/15">
+          <div className="mb-1 flex items-start justify-between border-b border-[#1c1b17]/15 pb-4">
             <div>
-              <p className="text-xs font-black tracking-wider text-teal-700">
-                YOUR TASKS
+              <p className="font-['Spectral',Georgia,serif] text-[13px] italic text-[#a9824f]">
+                Your tasks
               </p>
-              <h3>{tasks.length} open items</h3>
+              <h3 className="font-['Spectral',Georgia,serif] text-lg font-semibold text-[#1c1b17]">
+                {tasks.length} open items
+              </h3>
             </div>
-            <CheckCircle2 size={20} className="text-teal-700" />
+            <CheckCircle2 size={20} className="text-[#0f3d2e]" />
           </div>
           <ul className="list-none p-0 m-0">
             {tasks.length === 0 ? (
-              <li className="grid place-items-center gap-2 py-10 px-3 text-teal-700 text-center">
+              <li className="grid place-items-center gap-2 py-10 px-3 text-center text-[#1c1b17]/60">
                 <CheckCircle2 size={22} />
                 <strong className="text-gray-900 text-sm">No tasks yet</strong>
                 <span className="text-gray-600 text-xs">
@@ -128,29 +128,29 @@ export default function TasksPage() {
               tasks.map((task) => (
                 <li
                   key={task.uuid}
-                  className="flex items-center gap-2.5 py-3 px-0 border-b border-gray-300 last:border-b-0"
+                  className="flex items-center gap-2.5 border-b border-[#1c1b17]/15 py-4 last:border-b-0"
                 >
                   <span
-                    className={`flex-shrink-0 w-3 h-3 border-2 rounded-full ${
+                    className={`h-3 w-3 shrink-0 rounded-full border-2 ${
                       task.completed
-                        ? "border-teal-700 bg-teal-700"
-                        : "border-red-600"
+                        ? "border-[#0f3d2e] bg-[#0f3d2e]"
+                        : "border-[#7b2d26]"
                     }`}
                   />
                   <div className="min-w-0 flex-1">
-                    <strong className="block text-gray-900 text-sm">
+                    <strong className="block font-['Spectral',Georgia,serif] text-sm font-semibold text-[#1c1b17]">
                       {task.title}
                     </strong>
-                    <small className="block mt-1 text-gray-500 text-xs">
+                    <small className="mt-1 block text-xs text-[#a9824f]">
                       {task.category?.name || "Uncategorized"}
                     </small>
                   </div>
                   {task.is_overdue && (
-                    <span className="flex-shrink-0 px-2 py-1 rounded-full text-xs font-black text-red-900 bg-red-100">
+                    <span className="shrink-0 border border-[#7b2d26] px-2 py-1 text-xs font-semibold text-[#7b2d26]">
                       Overdue
                     </span>
                   )}
-                  <span className="flex-shrink-0 px-2 py-1 rounded-full text-xs font-black text-gray-600 bg-gray-200">
+                  <span className="shrink-0 border border-[#1c1b17]/25 px-2 py-1 text-xs font-semibold text-[#1c1b17]/60">
                     {task.completed ? "Done" : "Open"}
                   </span>
                 </li>

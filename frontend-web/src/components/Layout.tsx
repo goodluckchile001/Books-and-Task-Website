@@ -6,20 +6,20 @@ export default function Layout() {
   const { isLoggedIn, logout } = useAuth();
 
   return (
-    <main className="w-min(1180px, calc(100% - 40px)) mx-auto py-28">
-      <header className="flex items-center justify-between gap-6 pb-7 border-b border-gray-300">
+    <main className="mx-auto w-[calc(100%-2rem)] max-w-[1180px] py-10 md:py-16">
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap');`}</style>
+      <header className="flex flex-wrap items-center justify-between gap-5 border-b border-[#1c1b17]/15 pb-6">
         <Link className="flex items-center gap-3 no-underline" to="/">
-          <span
-            className="grid place-items-center w-10 h-10 text-white rounded-t-2xl rounded-br-sm"
-            style={{ background: "var(--teal)" }}
-          >
+          <span className="grid h-10 w-10 place-items-center rounded-tr-2xl rounded-bl-sm bg-[#0f3d2e] text-[#faf6ec]">
             <BookOpen size={20} />
           </span>
           <span className="block">
-            <span className="block text-xs font-black tracking-wider text-teal-700">
+            <span className="block font-['Spectral',Georgia,serif] text-[13px] italic text-[#7b2d26]">
               PERSONAL LIBRARY
             </span>
-            <h1 className="m-0 text-2xl font-semibold">Reading desk</h1>
+            <h1 className="m-0 font-['Spectral',Georgia,serif] text-2xl font-semibold text-[#1c1b17]">
+              Reading desk
+            </h1>
           </span>
         </Link>
         <nav className="flex items-center gap-2" aria-label="Main navigation">
@@ -27,7 +27,7 @@ export default function Layout() {
             to="/"
             end
             className={({ isActive }) =>
-              `inline-flex items-center gap-1 px-2.5 py-2 rounded text-xs font-bold no-underline transition-colors ${isActive ? "text-teal-700 bg-emerald-100" : "text-gray-500 hover:text-teal-700 hover:bg-emerald-100"}`
+              `inline-flex items-center gap-1 px-2.5 py-2 font-['Spectral',Georgia,serif] text-xs font-semibold no-underline transition-colors ${isActive ? "text-[#0f3d2e] border-b-2 border-[#0f3d2e]" : "text-[#1c1b17]/55 hover:text-[#0f3d2e]"}`
             }
           >
             Library
@@ -36,7 +36,7 @@ export default function Layout() {
             <NavLink
               to="/tasks"
               className={({ isActive }) =>
-                `inline-flex items-center gap-1 px-2.5 py-2 rounded text-xs font-bold no-underline transition-colors ${isActive ? "text-teal-700 bg-emerald-100" : "text-gray-500 hover:text-teal-700 hover:bg-emerald-100"}`
+                `inline-flex items-center gap-1 px-2.5 py-2 font-['Spectral',Georgia,serif] text-xs font-semibold no-underline transition-colors ${isActive ? "text-[#0f3d2e] border-b-2 border-[#0f3d2e]" : "text-[#1c1b17]/55 hover:text-[#0f3d2e]"}`
               }
             >
               <ListChecks size={15} /> Tasks
@@ -44,7 +44,7 @@ export default function Layout() {
           )}
           {isLoggedIn ? (
             <button
-              className="inline-flex items-center justify-center gap-1 h-10 px-3.5 rounded text-xs font-bold border border-gray-300 bg-transparent hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center justify-center gap-1 h-10 px-3.5 border border-[#1c1b17]/25 text-xs font-semibold text-[#1c1b17] transition-colors hover:bg-[#f3ecd9]"
               type="button"
               onClick={logout}
             >
@@ -53,7 +53,7 @@ export default function Layout() {
           ) : (
             <NavLink
               className={({ isActive }) =>
-                `inline-flex items-center gap-1 px-3.5 h-10 rounded text-xs font-bold text-white no-underline transition-colors ${isActive ? "bg-gray-800" : "bg-gray-800 hover:opacity-90"}`
+                `inline-flex items-center gap-1 px-3.5 h-10 text-xs font-semibold text-[#faf6ec] no-underline transition-colors ${isActive ? "bg-[#0f3d2e]" : "bg-[#0f3d2e] hover:bg-[#18533f]"}`
               }
               to="/login"
             >
