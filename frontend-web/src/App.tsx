@@ -4,7 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import TasksPage from "./pages/TasksPage.tsx";
-import BookDetailsPage from "./pages/BookDetailsPage.tsx";
+import BookDetail from "./pages/BookDetail";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/books/:bookId" element={<BookDetailsPage />} />
+        <Route path="/books/:bookId" element={<BookDetail />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/tasks" element={<TasksPage />} />
         </Route>

@@ -6,13 +6,13 @@ export type Book = {
   title: string;
   author: string;
   owner_username?: string | null;
-  description?: string;
   cover_url?: string | null;
+  description?: string;
   is_already_cached: boolean;
   source_id?: string | null;
-  source_type?: string;
+  source_type?: string | null;
+  subjects?: string[];
 };
-
 export type Task = {
   uuid: string;
   title: string;
